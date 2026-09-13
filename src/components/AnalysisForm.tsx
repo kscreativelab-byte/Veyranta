@@ -141,8 +141,8 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onAnalysisComplete }
             confidenceScore: 0.95
           },
           [],
-          true,
-          'free'
+          isFreePlan,
+          subscription?.planId || 'free'
         );
         clearInterval(stageInterval);
         onAnalysisComplete(fallbackReport);

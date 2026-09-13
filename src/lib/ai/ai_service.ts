@@ -75,8 +75,7 @@ export class AIService {
     const roiRiskSummary = this.generateRoiRiskSummary(issues, sentiment.totalReviews);
     const executiveSummary = this.generateExecutiveSummary(companyName, reputationScore, sentiment, issues, strengths, recommendations);
 
-    const confidenceLevel: 'Low' | 'Medium' | 'High' = sentiment.totalReviews >= 20 ? 'High' : 'Medium';
-    const planTier = isFreePreview ? 'free' : userPlanId === 'starter' ? 'starter_299' : userPlanId === 'pro' ? 'pro_799' : 'business_2499';
+    const planTier = userPlanId === 'starter' ? 'starter_299' : userPlanId === 'pro' ? 'pro_799' : userPlanId === 'business' ? 'business_2499' : 'free';
 
     const dataSources = [
       { source: 'Google Business Reviews', status: 'Connected', reviewCount: Math.round(sentiment.totalReviews * 0.45) },

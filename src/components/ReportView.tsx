@@ -62,8 +62,8 @@ export const ReportView: React.FC<ReportViewProps> = ({ report }) => {
     unlockedPlanTier
   } = report;
 
-  const is299Unlocked = !isFreePreview || unlockedPlanTier === 'starter_299' || unlockedPlanTier === 'pro_799' || unlockedPlanTier === 'business_2499';
-  const is799Unlocked = !isFreePreview || unlockedPlanTier === 'pro_799' || unlockedPlanTier === 'business_2499';
+  const is299Unlocked = unlockedPlanTier === 'starter_299' || unlockedPlanTier === 'pro_799' || unlockedPlanTier === 'business_2499';
+  const is799Unlocked = unlockedPlanTier === 'pro_799' || unlockedPlanTier === 'business_2499';
 
   const downloadCsvReport = () => {
     if (!is299Unlocked) {
