@@ -59,7 +59,7 @@ export interface CompanyOverview {
   publicReputationSummary?: string;
 }
 
-export type FeedbackSourceType = 'google' | 'reddit' | 'news' | 'social' | 'appstore' | 'csv' | 'manual';
+export type FeedbackSourceType = 'google' | 'reddit' | 'news' | 'social' | 'appstore' | 'csv' | 'manual' | 'yelp' | 'trustpilot';
 
 export interface NormalizedFeedbackItem {
   id?: string;
