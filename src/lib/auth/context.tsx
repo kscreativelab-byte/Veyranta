@@ -262,10 +262,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateUserSubscription = (planId: SubscriptionPlanId, status: string = 'active') => {
-    if (!user) return;
+    let activeUser = user;
+    if (!activeUser) {
+      activeUser = {
+        id: 'usr_guest_' + Math.random().toString(36).substring(2, 9),
+        email: 'guest@veyranta.ai',
+        fullName: 'Guest User',
+        role: 'user',
+        createdAt: new Date().toISOString()
+      };
+      setUser(activeUser);
+      localStorage.setItem('veyranta_user', JSON.stringify(activeUser));
+    }
     const updatedSub: UserSubscription = {
       id: 'sub_' + Math.random().toString(36).substring(2, 9),
-      userId: user.id,
+      userId: activeUser.id,
       planId,
       status: status as any,
       currentPeriodStart: new Date().toISOString(),

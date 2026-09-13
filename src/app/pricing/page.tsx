@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { PublicNav } from '@/components/landing/PublicNav';
 import { PublicFooter } from '@/components/landing/PublicFooter';
 import { CurrencySwitcher, Currency } from '@/components/ui/CurrencySwitcher';
+import { PaymentCheckoutModal } from '@/components/payments/PaymentCheckoutModal';
 
 export default function PricingPage() {
   const { user, subscription, updateUserSubscription } = useAuth();
@@ -16,6 +17,8 @@ export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<{ text: string; isError?: boolean } | null>(null);
   const [currency, setCurrency] = useState<Currency>('INR');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<SubscriptionPlanId>('pro');
 
   const getFormattedPrice = (planId: string, curr: Currency) => {
     switch (planId) {
@@ -32,20 +35,6 @@ export default function PricingPage() {
     }
   };
 
-  const loadRazorpaySdk = (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if ((window as any).Razorpay) {
-        resolve(true);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
   const handleSelectPlan = async (planId: SubscriptionPlanId) => {
     if (planId === 'free') {
       updateUserSubscription('free');
@@ -53,108 +42,17 @@ export default function PricingPage() {
       return;
     }
 
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    setLoadingPlan(planId);
     setCheckoutMessage(null);
+    setSelectedPlanId(planId);
+    setIsModalOpen(true);
+  };
 
-    try {
-      // 1. Initialize Razorpay order via server API
-      const res = await fetch('/api/payments/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId, userId: user.id })
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to initialize checkout order.');
-      }
-
-      const order = data.order;
-      const planDetails = SUBSCRIPTION_PLANS[planId];
-
-      // 2. Load Razorpay script
-      const sdkLoaded = await loadRazorpaySdk();
-
-      if (!sdkLoaded) {
-        throw new Error('Razorpay Payment Gateway SDK failed to load. Please check your internet connection.');
-      }
-
-      // 3. Open Interactive Razorpay Checkout Modal
-      const options: any = {
-        key: order.keyId || 'rzp_test_1DP5mmOlF5G5ag',
-        amount: order.amount,
-        currency: order.currency || 'INR',
-        name: 'Veyranta Intelligence',
-        description: `${planDetails.name} Subscription`,
-        prefill: {
-          name: user.fullName || user.email.split('@')[0],
-          email: user.email
-        },
-        theme: {
-          color: '#7c3aed'
-        },
-        handler: async function (response: any) {
-          try {
-            const verifyRes = await fetch('/api/payments/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id || order.orderId,
-                razorpay_payment_id: response.razorpay_payment_id || 'pay_' + Date.now(),
-                razorpay_signature: response.razorpay_signature || 'test_sig',
-                planId,
-                userId: user.id
-              })
-            });
-
-            const verifyData = await verifyRes.json();
-            if (verifyData.success) {
-              updateUserSubscription(planId, 'active');
-              setCheckoutMessage({
-                text: `🎉 Payment successful! You are now subscribed to ${planDetails.name}.`
-              });
-            } else {
-              setCheckoutMessage({
-                text: verifyData.error || 'Payment verification failed.',
-                isError: true
-              });
-            }
-          } catch (err: any) {
-            setCheckoutMessage({
-              text: 'Payment verification error: ' + err.message,
-              isError: true
-            });
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            setCheckoutMessage({
-              text: 'Checkout process was closed by user.',
-              isError: true
-            });
-          }
-        }
-      };
-
-      if (!order.isMock && order.orderId) {
-        options.order_id = order.orderId;
-      }
-
-      const razorpayInstance = new (window as any).Razorpay(options);
-      razorpayInstance.open();
-    } catch (err: any) {
-      setCheckoutMessage({
-        text: err.message || 'Checkout initialization failed.',
-        isError: true
-      });
-    } finally {
-      setLoadingPlan(null);
-    }
+  const handlePaymentSuccess = (planId: SubscriptionPlanId) => {
+    updateUserSubscription(planId, 'active');
+    const planDetails = SUBSCRIPTION_PLANS[planId];
+    setCheckoutMessage({
+      text: `🎉 Payment successful! You are now subscribed to ${planDetails.name}.`
+    });
   };
 
   const activePlanId = subscription?.planId || 'free';
@@ -324,6 +222,14 @@ export default function PricingPage() {
           </p>
         </div>
       </main>
+
+      <PaymentCheckoutModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        planId={selectedPlanId}
+        currency={currency}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
 
       <PublicFooter />
     </div>
