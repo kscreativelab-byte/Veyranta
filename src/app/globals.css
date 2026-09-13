@@ -8,21 +8,40 @@
   }
   
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased font-sans min-h-screen flex flex-col selection:bg-brand-500 selection:text-white transition-colors duration-300;
+    @apply bg-slate-50 text-slate-900 antialiased font-sans min-h-screen flex flex-col transition-colors duration-300;
+  }
+
+  html.dark body {
+    @apply bg-slate-950 text-slate-100;
   }
 }
 
 /* Custom UI Cards & Shimmers */
 .saas-card {
-  @apply bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm dark:shadow-lg backdrop-blur-sm transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700;
+  @apply bg-white border border-slate-200 rounded-xl p-6 shadow-sm backdrop-blur-sm transition-all duration-200;
+}
+.saas-card:hover {
+  @apply border-slate-300;
+}
+.dark .saas-card {
+  @apply bg-slate-900/90 border-slate-800 shadow-lg;
+}
+.dark .saas-card:hover {
+  @apply border-slate-700;
 }
 
 .saas-card-flat {
-  @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5;
+  @apply bg-white border border-slate-200 rounded-xl p-5;
+}
+.dark .saas-card-flat {
+  @apply bg-slate-900 border-slate-800;
 }
 
 .saas-input {
-  @apply bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-lg px-3.5 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition;
+  @apply bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition;
+}
+.dark .saas-input {
+  @apply bg-slate-900 border-slate-700/80 text-slate-100 placeholder-slate-500;
 }
 
 .saas-btn-primary {
@@ -30,7 +49,10 @@
 }
 
 .saas-btn-secondary {
-  @apply bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 font-semibold text-xs px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 active:scale-[0.98] transition flex items-center justify-center gap-2;
+  @apply bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-xs px-4 py-2.5 rounded-lg border border-slate-300 active:scale-[0.98] transition flex items-center justify-center gap-2;
+}
+.dark .saas-btn-secondary {
+  @apply bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700;
 }
 
 /* Skeleton Loading Shimmer */
@@ -61,11 +83,20 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100 dark:bg-slate-950;
+  @apply bg-slate-100;
+}
+.dark ::-webkit-scrollbar-track {
+  @apply bg-slate-950;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-800 rounded-md;
+  @apply bg-slate-300 rounded-md;
+}
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-800;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400 dark:bg-slate-700;
+  @apply bg-slate-400;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-700;
 }
