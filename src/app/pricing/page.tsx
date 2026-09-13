@@ -85,13 +85,12 @@ export default function PricingPage() {
       }
 
       // 3. Open Interactive Razorpay Checkout Modal
-      const options = {
-        key: order.keyId || 'rzp_test_placeholder_key',
+      const options: any = {
+        key: order.keyId || 'rzp_test_1DP5mmOlF5G5ag',
         amount: order.amount,
         currency: order.currency || 'INR',
         name: 'Veyranta Intelligence',
         description: `${planDetails.name} Subscription`,
-        order_id: order.orderId,
         prefill: {
           name: user.fullName || user.email.split('@')[0],
           email: user.email
@@ -141,6 +140,10 @@ export default function PricingPage() {
           }
         }
       };
+
+      if (!order.isMock && order.orderId) {
+        options.order_id = order.orderId;
+      }
 
       const razorpayInstance = new (window as any).Razorpay(options);
       razorpayInstance.open();

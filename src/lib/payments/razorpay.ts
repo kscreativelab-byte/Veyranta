@@ -12,7 +12,7 @@ export async function createRazorpayOrder(planId: SubscriptionPlanId, userId: st
     throw new Error('Invalid plan selected for checkout.');
   }
 
-  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder_key';
+  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag';
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
   // Amount in sub-units (paisa): ₹299 -> 29900 paisa
@@ -20,9 +20,10 @@ export async function createRazorpayOrder(planId: SubscriptionPlanId, userId: st
   const receiptId = `rcpt_${userId.substring(0, 8)}_${Date.now()}`;
 
   if (!keySecret) {
-    // Return structured test checkout token for local test environment
+    // Return structured test checkout token with valid Razorpay format
+    const mockOrderId = 'order_' + Math.random().toString(36).substring(2, 16);
     return {
-      orderId: `order_mock_${Date.now()}`,
+      orderId: mockOrderId,
       amount: amountPaisa,
       currency: 'INR',
       keyId,
