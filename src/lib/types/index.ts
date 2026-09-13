@@ -54,7 +54,7 @@ export interface CompanyOverview {
   publicContact?: string;
   metaTitle?: string;
   metaDescription?: string;
-  confidenceScore: number; // 0 to 1
+  confidenceScore?: number; // 0 to 1
   detectedCustomerSegments?: string[];
   publicReputationSummary?: string;
 }

@@ -137,7 +137,8 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onAnalysisComplete }
           {
             name: targetName || 'Coursera',
             websiteUrl: targetUrl || `https://${(targetName || 'coursera').toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
-            industry: targetIndustry
+            industry: targetIndustry,
+            confidenceScore: 0.95
           },
           [],
           true,
